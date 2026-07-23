@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Conversão | Sistema 4K</title>
+
+<!-- Fontes Futuristas -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ===============================
+   Variáveis de Cores (Roxo, Verde Neon, Laranja Neon)
+================================ */
+:root {
+    --bg-dark: #05050a;
+    --bg-gradient: radial-gradient(circle at top center, #1a0b2e 0%, #05050a 100%);
+    
+    --neon-purple: #bc13fe;
+    --neon-green: #00ff9d;
+    --neon-orange: #ff9900;
+    --neon-red: #ff0055;
+    
+    --glass-bg: rgba(20, 20, 30, 0.5);
+    --glass-border: rgba(188, 19, 254, 0.15);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+    
+    --text-main: #e2e8f0;
+    --text-muted: #94a3b8;
+}
+
+/* ===============================
+   Reset e Global
+================================ */
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-dark);
+    background-image: var(--bg-gradient);
+    background-attachment: fixed;
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+}
+
+/* Grelha de fundo (Cyber-grid) */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: 
+        linear-gradient(rgba(188, 19, 254, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(188, 19, 254, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.container {
+    width: 100%;
+    max-width: 460px;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+header h1 {
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 2px;
+    font-weight: 700;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    margin: 0;
+    text-transform: uppercase;
+    color: #ffffff;
+    text-shadow: 0 0 15px rgba(188, 19, 254, 0.5);
+}
+
+/* ===============================
+   Card com Glassmorphism
+================================ */
+.card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: var(--glass-shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--neon-purple), transparent);
+}
+
+label {
+    display: block;
+    margin-top: 20px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--neon-purple);
+    letter-spacing: 1px;
+    text-shadow: 0 0 8px rgba(188, 19, 254, 0.3);
+}
+
+input {
+    width: 100%;
+    padding: 16px;
+    margin-top: 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(188, 19, 254, 0.2);
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    background: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--neon-purple);
+    box-shadow: 0 0 15px rgba(188, 19, 254, 0.3);
+    background: rgba(0, 0, 0, 0.8);
+}
+
+input::placeholder {
+    color: rgba(255, 255, 255, 0.2);
+}
+
+/* ===============================
+   Botões e Controles
+================================ */
+button {
+    width: 100%;
+    margin-top: 30px;
+    padding: 18px;
+    border: 1px solid var(--neon-green);
+    border-radius: 10px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: 2px;
+    background: rgba(0, 255, 157, 0.1);
+    color: var(--neon-green);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(0, 255, 157, 0.15);
+}
+
+button:hover {
+    background: var(--neon-green);
+    color: #000;
+    box-shadow: 0 0 30px rgba(0, 255, 157, 0.6);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* ===============================
+   Switch de Moeda
+================================ */
+.switch-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding: 10px 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.switch-container span {
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    transition: color 0.3s ease;
+}
+
+.switch {
+    position: relative;
+    width: 60px;
+    height: 30px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    inset: 0;
+    border-radius: 30px;
+    background: rgba(255, 0, 85, 0.2);
+    border: 1px solid var(--neon-red);
+    transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.slider::before {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: #fff;
+    border-radius: 50%;
+    bottom: 3px;
+    left: 3px;
+    transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.switch input:checked + .slider {
+    background: rgba(0, 255, 157, 0.2);
+    border-color: var(--neon-green);
+}
+
+.switch input:checked + .slider::before {
+    transform: translateX(30px);
+    background: var(--neon-green);
+    box-shadow: 0 0 15px var(--neon-green);
+}
+
+/* ===============================
+   Área de Resultados
+================================ */
+.resultado {
+    margin-top: 25px;
+    background: rgba(0, 0, 0, 0.6);
+    color: var(--neon-orange);
+    border: 1px solid var(--neon-orange);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    box-shadow: 0 0 20px rgba(255, 153, 0, 0.2);
+}
+
+.resultado .valor-destaque {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 153, 0, 0.6);
+    display: block;
+    margin-top: 5px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <header>
+        <h1>Calculadora de Conversão</h1>
+    </header>
+
+    <div class="card">
+        <label>Moeda Base</label>
+        <div class="switch-container">
+            <span id="labelDolar" style="color: var(--neon-orange); text-shadow: 0 0 8px rgba(255, 153, 0, 0.4);">DÓLAR</span>
+            <label class="switch">
+                <input type="checkbox" id="toggleMoeda">
+                <span class="slider"></span>
+            </label>
+            <span id="labelGuarani">GUARANI</span>
+        </div>
+
+        <label for="cotacao">Cotação do dia</label>
+        <input id="cotacao" class="money" placeholder="0,00" inputmode="decimal">
+
+        <label for="valorProduto">Valor do Produto</label>
+        <input id="valorProduto" class="money" placeholder="0,00" inputmode="decimal">
+
+        <button id="btnCalcular">CALCULAR</button>
+
+        <div id="resultado"></div>
+    </div>
+</div>
+
+<script>
+function formatarMoeda(valor){
+    valor = valor.replace(/\D/g,'')
+    if(valor === '') return ''
+    valor = (parseInt(valor) / 100).toFixed(2)
+    let partes = valor.split('.')
+    let inteiro = partes[0]
+    let decimal = partes[1]
+    inteiro = inteiro.replace(/\B(?=(\d{3})+(?!\d))/g,".")
+    return inteiro + "," + decimal
+}
+
+function numero(valor){
+    return parseFloat(
+        valor.replace(/\./g,'').replace(',','.')
+    ) || 0
+}
+
+document.querySelectorAll(".money").forEach(campo=>{
+    campo.addEventListener("input",()=>{
+        campo.value = formatarMoeda(campo.value)
+    })
+})
+
+const toggleMoeda = document.getElementById("toggleMoeda");
+const labelDolar = document.getElementById("labelDolar");
+const labelGuarani = document.getElementById("labelGuarani");
+
+toggleMoeda.addEventListener("change", () => {
+    if(toggleMoeda.checked) {
+        labelGuarani.style.color = "var(--neon-orange)";
+        labelGuarani.style.textShadow = "0 0 8px rgba(255, 153, 0, 0.4)";
+        labelDolar.style.color = "var(--text-muted)";
+        labelDolar.style.textShadow = "none";
+    } else {
+        labelDolar.style.color = "var(--neon-orange)";
+        labelDolar.style.textShadow = "0 0 8px rgba(255, 153, 0, 0.4)";
+        labelGuarani.style.color = "var(--text-muted)";
+        labelGuarani.style.textShadow = "none";
+    }
+});
+
+function calcular(){
+    const cotacao = numero(document.getElementById("cotacao").value)
+    const produto = numero(document.getElementById("valorProduto").value)
+    const modoGuarani = toggleMoeda.checked
+
+    let resultado = 0
+
+    if(modoGuarani){
+        resultado = produto / cotacao
+    }else{
+        resultado = cotacao * produto
+    }
+
+    mostrarResultado(resultado)
+}
+
+function mostrarResultado(valor){
+    const resultado = document.getElementById("resultado")
+    resultado.innerHTML = `
+        <div class="resultado">
+            Valor em Reais
+            <span class="valor-destaque">R$ ${valor.toLocaleString("pt-BR",{minimumFractionDigits:2, maximumFractionDigits:2})}</span>
+        </div>
+    `
+}
+
+document.getElementById("btnCalcular").addEventListener("click", calcular)
+
+document.getElementById("cotacao").addEventListener("keydown",(e)=>{
+    if(e.key === "Enter"){
+        e.preventDefault()
+        document.getElementById("valorProduto").focus()
+    }
+})
+
+document.getElementById("valorProduto").addEventListener("keydown",(e)=>{
+    if(e.key === "Enter"){
+        e.preventDefault()
+        calcular()
+    }
+})
+</script>
+
+</body>
+</html>
